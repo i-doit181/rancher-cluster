@@ -9,6 +9,7 @@ if [[ $master_type = "masterless" ]]
  elif [[ $master_type = "master" ]]
   then
    docker-machine create rancher-master -d virtualbox
+   docker-machine regenerate-certs rancher-master
    eval $(docker-machine env rancher-master)
    docker run -d --restart=always -p 8080:8080 rancher/server
  else
@@ -21,6 +22,7 @@ if [[ amount_machine -ge 1 ]]
   for ((number=1;number<=amount_machine;number++))
   do
    docker-machine create machine-$number -d virtualbox
+   docker-machine regenerate-certs machine-$number
    eval $(docker-machine env machine-$number)
    docker run -e CATTLE_HOST_LABELS='developer=salvax' -d --privileged -v /var/run/docker.sock:/var/run/docker.sock rancher/agent:v1.0.2 http://$master_ip:8080
   done
